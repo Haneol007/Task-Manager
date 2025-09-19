@@ -1,4 +1,137 @@
-# 🙏 Prayerify
+# TaskFlow Pro 🚀
+
+**Professional Task Management System**
+
+A comprehensive, feature-rich task management web application built with Flask, designed for professionals and teams who need powerful task organization, project management, and productivity analytics.
+
+![TaskFlow Pro](https://img.shields.io/badge/Version-1.0.0-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.8%2B-brightgreen.svg)
+![Flask](https://img.shields.io/badge/Flask-2.3.3-orange.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+## 🌟 Features
+
+### Core Functionality
+- **User Authentication & Authorization** - Secure login/registration with password validation
+- **Task Management** - Create, edit, delete, and organize tasks with rich metadata
+- **Project Organization** - Group tasks into projects with progress tracking
+- **Priority & Status Management** - Categorize tasks by priority (Low, Medium, High, Urgent) and status
+- **Due Date Tracking** - Set deadlines and get overdue notifications
+- **Subtask Support** - Break down complex tasks into manageable subtasks
+- **Comments & Attachments** - Collaborate with task-specific comments and file attachments
+
+### Advanced Features
+- **Analytics Dashboard** - Comprehensive productivity analytics with charts
+- **RESTful API** - Full API access for integrations and mobile apps
+- **Search & Filtering** - Advanced search and filtering capabilities
+- **Responsive Design** - Mobile-friendly Bootstrap interface
+- **Data Visualization** - Charts for task completion, priority distribution, and productivity trends
+- **Time Tracking** - Estimated vs actual time logging
+
+### Technical Features
+- **Database Relationships** - Sophisticated SQLAlchemy models with proper relationships
+- **Form Validation** - Comprehensive client and server-side validation
+- **Error Handling** - Graceful error handling with user-friendly messages
+- **Logging** - Application logging for debugging and monitoring
+- **Security** - Password hashing, CSRF protection, and input sanitization
+
+## 🐛 Intentional Bug
+
+**⚠️ IMPORTANT NOTICE: This application contains an intentional bug for educational purposes!**
+
+### Bug Description
+The task deletion functionality contains a **cascading deletion bug** that demonstrates real-world database relationship issues:
+
+**Location**: `app/views/tasks.py` - `delete_task()` function (lines 198-232)
+
+**Problem**: When deleting a parent task that has subtasks, the deletion process:
+1. Only deletes the parent task record
+2. **Fails to properly handle** subtasks that reference the parent via `parent_task_id`
+3. **Doesn't clean up** related comments and attachments
+4. Results in **orphaned records** and potential foreign key constraint violations
+
+### Bug Impact
+- **Data Inconsistency**: Orphaned subtasks remain in database
+- **Foreign Key Violations**: May cause database errors in strict configurations  
+- **UI Confusion**: Subtasks may appear without parent context
+- **Data Integrity Issues**: Breaks referential integrity
+
+### Reproducing the Bug
+1. Create a task with subtasks (or use demo data)
+2. Try to delete the parent task
+3. Observe the error or check database for orphaned records
+
+### The Fix
+The proper solution requires implementing cascading deletion:
+
+```python
+# Proper deletion logic (what's missing):
+# 1. Delete or reassign subtasks
+subtasks = Task.query.filter_by(parent_task_id=task.id).all()
+for subtask in subtasks:
+    subtask.parent_task_id = None  # Or delete subtasks
+
+# 2. Delete related comments
+task.comments.delete()
+
+# 3. Delete related attachments  
+task.attachments.delete()
+
+# 4. Then delete the main task
+db.session.delete(task)
+db.session.commit()
+```
+
+This bug illustrates common pitfalls in database design and the importance of proper cascade handling!
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.8 or higher
+- pip (Python package manager)
+- Git
+
+### Installation
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/taskflow-pro.git
+   cd taskflow-pro
+   ```
+
+2. **Create Virtual Environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\\Scripts\\activate
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Initialize Database**
+   ```bash
+   flask init-db
+   ```
+
+5. **Seed Demo Data (Optional)**
+   ```bash
+   flask seed-db
+   ```
+
+6. **Run the Application**
+   ```bash
+   python app.py
+   ```
+
+7. **Visit the App**
+   Open your browser to `http://localhost:5000`
+
+### Demo Account
+After seeding the database:
+- **Username**: `demo_user`
+- **Password**: `DemoPassword123`
 
 A beautiful and intuitive prayer management app built with .NET MAUI, designed to help you organize, track, and engage with your prayers in a meaningful way.
 

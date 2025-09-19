@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Register - TaskFlow Pro{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-plus-fill text-primary" style="font-size: 3rem;"></i>
+                        <h3 class="mt-2">Create Account</h3>
+                        <p class="text-muted">Join TaskFlow Pro and start managing your tasks</p>
+                    </div>
+                    
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           placeholder="First Name" required>
+                                    <label for="first_name">First Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           placeholder="Last Name" required>
+                                    <label for="last_name">Last Name</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Username" required minlength="3">
+                            <label for="username">Username</label>
+                            <div class="form-text">Choose a unique username (3+ characters)</div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="Email" required>
+                            <label for="email">Email Address</label>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Password" required minlength="8">
+                            <label for="password">Password</label>
+                            <div class="form-text">
+                                Password must be at least 8 characters with uppercase, lowercase, and number
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                   placeholder="Confirm Password" required>
+                            <label for="confirm_password">Confirm Password</label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
+                                and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <i class="bi bi-person-check"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account?</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary w-100 mt-2">
+                            Sign In Instead
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    <a href="{{ url_for('main.index') }}" class="text-decoration-none">← Back to Home</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordField = document.getElementById('password');
+    const confirmPasswordField = document.getElementById('confirm_password');
+    
+    function validatePasswords() {
+        if (passwordField.value !== confirmPasswordField.value) {
+            confirmPasswordField.setCustomValidity('Passwords do not match');
+        } else {
+            confirmPasswordField.setCustomValidity('');
+        }
+    }
+    
+    passwordField.addEventListener('input', validatePasswords);
+    confirmPasswordField.addEventListener('input', validatePasswords);
+});
+</script>
+{% endblock %}

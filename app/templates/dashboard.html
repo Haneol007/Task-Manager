@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TaskFlow Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{{ url_for('tasks.create_task') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Task
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold mb-1">Total Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.total_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-list-task fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold mb-1">Completed</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.completed_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold mb-1">Pending</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.pending_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100" style="background: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold mb-1">Completion Rate</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ "%.1f"|format(stats.completion_rate) }}%</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-graph-up fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Tasks -->
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Recent Tasks</h6>
+            </div>
+            <div class="card-body">
+                {% if recent_tasks %}
+                    {% for task in recent_tasks %}
+                    <div class="card task-card mb-3 priority-{{ task.priority.value if task.priority else 'medium' }}">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h6 class="card-title {% if task.is_completed %}task-completed{% endif %}">
+                                        <a href="{{ url_for('tasks.view_task', id=task.id) }}" class="text-decoration-none">
+                                            {{ task.title }}
+                                        </a>
+                                    </h6>
+                                    <p class="card-text text-muted small">{{ task.description[:100] }}...</p>
+                                    <div>
+                                        <span class="badge bg-{{ 'success' if task.priority.value == 'low' else ('warning' if task.priority.value == 'medium' else ('info' if task.priority.value == 'high' else 'danger')) }} priority-badge">
+                                            {{ task.get_priority_label() }}
+                                        </span>
+                                        {% if task.due_date %}
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-calendar"></i> 
+                                                {% if task.is_overdue() %}
+                                                    <span class="overdue">Overdue</span>
+                                                {% else %}
+                                                    Due {{ task.due_date.strftime('%b %d') }}
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="toggleTaskComplete({{ task.id }}, this)">
+                                        {% if task.is_completed %}
+                                            <i class="bi bi-check-circle-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-circle"></i>
+                                        {% endif %}
+                                    </button>
+                                    <a href="{{ url_for('tasks.view_task', id=task.id) }}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <h5 class="text-muted mt-3">No tasks yet</h5>
+                        <p class="text-muted">Get started by creating your first task!</p>
+                        <a href="{{ url_for('tasks.create_task') }}" class="btn btn-primary">Create Task</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Overdue Tasks -->
+        {% if overdue_tasks %}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-danger">Overdue Tasks</h6>
+            </div>
+            <div class="card-body">
+                {% for task in overdue_tasks %}
+                <div class="d-flex align-items-center mb-2">
+                    <div class="flex-grow-1">
+                        <a href="{{ url_for('tasks.view_task', id=task.id) }}" class="text-decoration-none">
+                            <strong>{{ task.title }}</strong>
+                        </a>
+                        <br>
+                        <small class="text-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            {{ task.days_until_due()|abs }} days overdue
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Upcoming Tasks -->
+        {% if upcoming_tasks %}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">Due This Week</h6>
+            </div>
+            <div class="card-body">
+                {% for task in upcoming_tasks %}
+                <div class="d-flex align-items-center mb-2">
+                    <div class="flex-grow-1">
+                        <a href="{{ url_for('tasks.view_task', id=task.id) }}" class="text-decoration-none">
+                            <strong>{{ task.title }}</strong>
+                        </a>
+                        <br>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar"></i>
+                            Due {{ task.due_date.strftime('%a, %b %d') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Active Projects -->
+        {% if active_projects %}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">Active Projects</h6>
+            </div>
+            <div class="card-body">
+                {% for project in active_projects %}
+                <div class="mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <strong>{{ project.name }}</strong>
+                            {% set project_stats = project.get_task_stats() %}
+                            <div class="progress mt-1" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ project_stats.completion_rate }}%; background-color: {{ project.color }}">
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                {{ project_stats.completed_tasks }}/{{ project_stats.total_tasks }} tasks 
+                                ({{ "%.1f"|format(project_stats.completion_rate) }}%)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('tasks.create_task') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-plus-circle display-6"></i>
+                            <br>
+                            <small>New Task</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-outline-secondary btn-lg w-100">
+                            <i class="bi bi-list-ul display-6"></i>
+                            <br>
+                            <small>All Tasks</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('dashboard.analytics') }}" class="btn btn-outline-info btn-lg w-100">
+                            <i class="bi bi-graph-up display-6"></i>
+                            <br>
+                            <small>Analytics</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-success btn-lg w-100">
+                            <i class="bi bi-person display-6"></i>
+                            <br>
+                            <small>Profile</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

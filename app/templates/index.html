@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}TaskFlow Pro - Professional Task Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">TaskFlow Pro</h1>
+                <p class="lead mb-4">
+                    The ultimate task management system for professionals and teams. 
+                    Organize, prioritize, and track your work with powerful features 
+                    and beautiful analytics.
+                </p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-4 me-md-2">
+                        Get Started Free
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="bi bi-kanban display-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold">Powerful Features</h2>
+                <p class="lead text-muted">Everything you need to manage tasks efficiently</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-list-task text-primary mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Task Management</h5>
+                        <p class="card-text text-muted">
+                            Create, organize, and track tasks with priorities, due dates, and categories.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-graph-up text-success mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Analytics & Reports</h5>
+                        <p class="card-text text-muted">
+                            Visualize your productivity with charts and detailed analytics.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-people text-info mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Project Organization</h5>
+                        <p class="card-text text-muted">
+                            Group tasks into projects and track progress across multiple initiatives.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-bell text-warning mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Smart Notifications</h5>
+                        <p class="card-text text-muted">
+                            Never miss a deadline with intelligent reminders and overdue alerts.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-phone text-purple mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Mobile Responsive</h5>
+                        <p class="card-text text-muted">
+                            Access your tasks from anywhere with our fully responsive design.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-shield-check text-danger mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Secure & Reliable</h5>
+                        <p class="card-text text-muted">
+                            Your data is protected with enterprise-grade security measures.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="border-0">
+                    <h3 class="display-4 fw-bold text-primary">10K+</h3>
+                    <p class="lead text-muted">Tasks Completed</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="border-0">
+                    <h3 class="display-4 fw-bold text-success">500+</h3>
+                    <p class="lead text-muted">Active Users</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="border-0">
+                    <h3 class="display-4 fw-bold text-info">99.9%</h3>
+                    <p class="lead text-muted">Uptime</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="border-0">
+                    <h3 class="display-4 fw-bold text-warning">24/7</h3>
+                    <p class="lead text-muted">Support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-4">Ready to Get Organized?</h2>
+                <p class="lead mb-4">
+                    Join thousands of professionals who trust TaskFlow Pro to manage their work.
+                </p>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5">
+                    Start Your Free Trial
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
