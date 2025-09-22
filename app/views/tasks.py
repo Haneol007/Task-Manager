@@ -198,28 +198,28 @@ def edit_task(id):
 @tasks_bp.route('/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_task(id):
-    """Delete a task - INTENTIONAL BUG: Does not properly handle cascading deletions"""
+    """Delete a task - FIXED VERSION"""
     task = Task.query.filter_by(id=id, user_id=current_user.id).first_or_404()
     
     try:
-        # INTENTIONAL BUG: This deletion process has a critical flaw
-        # It only deletes the parent task but doesn't properly handle:
-        # 1. Subtasks that reference this task as parent_task_id
-        # 2. Task comments that reference this task
-        # 3. Task attachments that reference this task
+        # PROPER CASCADE DELETION:
         
-        # The bug: We're only deleting the main task without proper cascade handling
-        # This will leave orphaned records in the database and cause foreign key violations
-        # in some database configurations, leading to data inconsistency
+        # 1. Handle subtasks - either delete them or make them independent
+        subtasks = Task.query.filter_by(parent_task_id=task.id).all()
+        for subtask in subtasks:
+            subtask.parent_task_id = None  # Make subtasks independent
+            # OR: db.session.delete(subtask)  # Delete subtasks too
         
-        # What SHOULD happen: Proper cascade deletion or manual cleanup of related records
-        # What ACTUALLY happens: Orphaned subtasks and comments remain in the database
+        # 2. Delete related comments
+        for comment in task.comments:
+            db.session.delete(comment)
         
+        # 3. Delete related attachments
+        for attachment in task.attachments:
+            db.session.delete(attachment)
+        
+        # 4. Finally delete the main task
         db.session.delete(task)
-        # Missing: Proper cleanup of related records
-        # Missing: db.session.query(Task).filter_by(parent_task_id=id).update({'parent_task_id': None})
-        # Missing: Proper handling of comments and attachments
-        
         db.session.commit()
         
         flash('Task deleted successfully!', 'success')
@@ -227,7 +227,6 @@ def delete_task(id):
         
     except Exception as e:
         db.session.rollback()
-        # This will often trigger due to foreign key constraints
         flash('An error occurred while deleting the task. Please try again.', 'error')
         return redirect(url_for('tasks.view_task', id=id))
 
