@@ -35,54 +35,8 @@ A comprehensive, feature-rich task management web application built with Flask, 
 - **Logging** - Application logging for debugging and monitoring
 - **Security** - Password hashing, CSRF protection, and input sanitization
 
-## 🐛 Intentional Bug
 
-**⚠️ IMPORTANT NOTICE: This application contains an intentional bug for educational purposes!**
 
-### Bug Description
-The task deletion functionality contains a **cascading deletion bug** that demonstrates real-world database relationship issues:
-
-**Location**: `app/views/tasks.py` - `delete_task()` function (lines 198-232)
-
-**Problem**: When deleting a parent task that has subtasks, the deletion process:
-1. Only deletes the parent task record
-2. **Fails to properly handle** subtasks that reference the parent via `parent_task_id`
-3. **Doesn't clean up** related comments and attachments
-4. Results in **orphaned records** and potential foreign key constraint violations
-
-### Bug Impact
-- **Data Inconsistency**: Orphaned subtasks remain in database
-- **Foreign Key Violations**: May cause database errors in strict configurations  
-- **UI Confusion**: Subtasks may appear without parent context
-- **Data Integrity Issues**: Breaks referential integrity
-
-### Reproducing the Bug
-1. Create a task with subtasks (or use demo data)
-2. Try to delete the parent task
-3. Observe the error or check database for orphaned records
-
-### The Fix
-The proper solution requires implementing cascading deletion:
-
-```python
-# Proper deletion logic (what's missing):
-# 1. Delete or reassign subtasks
-subtasks = Task.query.filter_by(parent_task_id=task.id).all()
-for subtask in subtasks:
-    subtask.parent_task_id = None  # Or delete subtasks
-
-# 2. Delete related comments
-task.comments.delete()
-
-# 3. Delete related attachments  
-task.attachments.delete()
-
-# 4. Then delete the main task
-db.session.delete(task)
-db.session.commit()
-```
-
-This bug illustrates common pitfalls in database design and the importance of proper cascade handling!
 
 ## 🚀 Quick Start
 
